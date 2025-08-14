@@ -137,9 +137,5 @@ class GEPAOptimizer:
             
         except Exception as e:
             return {
-                "accuracy": 0.5,
-                "relevance": 0.5,
-                "coherence": 0.5,
-                "diversity": 0.5,
-                "primary_metric": 0.5,
+                None
             }
