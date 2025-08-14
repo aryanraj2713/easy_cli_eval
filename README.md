@@ -75,7 +75,7 @@ Options:
 ### Run an Experiment
 
 ```bash
-llm-benchmark experiment --config configs/experiments/gape_vs_traditional.yaml
+llm-benchmark experiment --config configs/experiments/gepa_vs_traditional.yaml
 ```
 
 Options:
@@ -91,7 +91,7 @@ llm-benchmark list-models --provider openai
 ### Validate Configuration File
 
 ```bash
-llm-benchmark validate-config --file configs/experiments/gape_vs_traditional.yaml
+llm-benchmark validate-config --file configs/experiments/gepa_vs_traditional.yaml
 ```
 
 ## Environment Variables
@@ -111,7 +111,7 @@ llm-benchmark validate-config --file configs/experiments/gape_vs_traditional.yam
 1. Create a new file in `src/llm_benchmark/providers/` (e.g., `groq.py`)
 2. Implement a class that inherits from `BaseLLMProvider`
 3. Register the provider using the `@ProviderFactory.register()` decorator
-4. Implement required methods: `generate()`, `batch_generate()`, `get_available_models()`, `to_dspy()`, and `gape()`
+4. Implement required methods: `generate()`, `batch_generate()`, `get_available_models()`, `to_dspy()`, and `gepa()`
 5. Add any provider-specific dependencies to `pyproject.toml` as an optional extra
 
 Example:
@@ -139,7 +139,7 @@ class GroqProvider(BaseLLMProvider):
 
 ## Work in Progress
 
-- **Groq Integration**: Support for Groq's high-performance inference API is currently in development
+- **Grok Integration**: Support for Grok/X.AI's API is currently in development
 - **Advanced RAG Methods**: Retrieval-augmented generation techniques will be added in future releases
 - **GUI Dashboard**: A web-based dashboard for visualizing benchmark results is planned
 
