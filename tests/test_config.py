@@ -110,7 +110,7 @@ name: "Test Experiment"
   
 models:
   - provider: openai
-    # Missing model field
+
 
 tasks:
   - name: question_answering

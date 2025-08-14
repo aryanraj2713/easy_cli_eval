@@ -6,9 +6,10 @@ Production-ready Python CLI tool for benchmarking Large Language Models with mod
 
 - **Multiple LLM Providers**: Support for OpenAI (GPT-5, GPT-4o), Google Gemini (Gemini 2.5 Pro), and Grok/X.AI (Grok-2)
 - **Modular Architecture**: Easily extend with new providers, evaluation methods, and metrics
-- **GEPA Integration**: Genetic prompt optimization using DSPy's GEPA library with evaluation support
+- **DSPy Integration**: Native DSPy evaluation with Chain of Thought, Few Shot, and Zero Shot methods
+- **GEPA Optimization**: Genetic prompt optimization using DSPy's GEPA library with integrated evaluation
 - **Traditional Methods**: Zero-shot, few-shot, and chain-of-thought prompting
-- **Comprehensive Metrics**: Accuracy, F1, ROUGE, BLEU, and more
+- **Advanced Metrics**: Task-appropriate metrics including accuracy, F1, semantic similarity, and exact match
 - **Experiment Configuration**: YAML-based experiment definitions
 - **Structured Logging**: Detailed logs with configurable levels
 
@@ -137,6 +138,13 @@ class GroqProvider(BaseLLMProvider):
 2. Update the metric calculation in the `calculate_metrics()` function
 3. Add any required dependencies to the `metrics` extra in `pyproject.toml`
 
+### Adding a New DSPy Metric
+
+1. Add the metric function to `src/llm_benchmark/evaluation/metrics/dspy_metrics.py`
+2. Update the `create_dspy_metric()` function to include your new metric
+3. Ensure the metric function follows the signature: `metric_fn(gold, pred, trace=None)`
+4. Add any required dependencies to the appropriate extras in `pyproject.toml`
+
 ## Work in Progress
 
 - **Grok Integration**: Support for Grok/X.AI's API is currently in development
@@ -146,6 +154,7 @@ class GroqProvider(BaseLLMProvider):
 ## Notes
 
 - Provider SDKs are installed as optional extras to keep the base installation lightweight
+- DSPy integration provides native evaluation capabilities with task-appropriate metrics
 - GEPA implementation uses DSPy's GEPA library for genetic prompt optimization with integrated evaluation
 - The project follows a modular design to make it easy to extend with new capabilities
 - All commands support the `--log-level` option to control verbosity
