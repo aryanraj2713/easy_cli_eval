@@ -1,12 +1,12 @@
 # LLM Benchmark CLI
 
-Production-ready Python CLI tool for benchmarking Large Language Models with modular architecture and comprehensive evaluation capabilities. Compare performance across providers (OpenAI, Gemini, Grok/X.AI) using traditional methods and GAPE (Genetic-Evolutionary Prompt Architecture).
+Production-ready Python CLI tool for benchmarking Large Language Models with modular architecture and comprehensive evaluation capabilities. Compare performance across providers (OpenAI, Gemini, Grok/X.AI) using traditional methods and GEPA (Genetic Prompt Architecture).
 
 ## Features
 
 - **Multiple LLM Providers**: Support for OpenAI (GPT-5, GPT-4o), Google Gemini (Gemini 2.5 Pro), and Grok/X.AI (Grok-2)
 - **Modular Architecture**: Easily extend with new providers, evaluation methods, and metrics
-- **GAPE Integration**: Genetic prompt optimization using DSPy's GEPA library
+- **GEPA Integration**: Genetic prompt optimization using DSPy's GEPA library
 - **Traditional Methods**: Zero-shot, few-shot, and chain-of-thought prompting
 - **Comprehensive Metrics**: Accuracy, F1, ROUGE, BLEU, and more
 - **Experiment Configuration**: YAML-based experiment definitions
@@ -53,7 +53,7 @@ Options:
 - `--provider`: Provider name (openai, gemini, grok)
 - `--model`: Model name (e.g., gpt-5, gemini-2.5-pro)
 - `--task`: Task name (qa, summarization, etc.)
-- `--method`: Evaluation method (zero_shot, few_shot, chain_of_thought, gape)
+- `--method`: Evaluation method (zero_shot, few_shot, chain_of_thought, gepa)
 - `--dataset`: Dataset name (optional, defaults to standard dataset for task)
 - `--num-samples`: Number of samples to evaluate (default: 10)
 - `--output`: Output file path (optional)
@@ -146,7 +146,7 @@ class GroqProvider(BaseLLMProvider):
 ## Notes
 
 - Provider SDKs are installed as optional extras to keep the base installation lightweight
-- GAPE implementation uses DSPy's GEPA library for genetic prompt optimization
+- GEPA implementation uses DSPy's GEPA library for genetic prompt optimization
 - The project follows a modular design to make it easy to extend with new capabilities
 - All commands support the `--log-level` option to control verbosity
 

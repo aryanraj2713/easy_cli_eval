@@ -1,5 +1,5 @@
-name: "GAPE vs Traditional Prompting Comparison"
-description: "Compare GAPE method against traditional prompting techniques"
+name: "GEPA vs Traditional Prompting Comparison"
+description: "Compare GEPA method against traditional prompting techniques"
   
 models:
   - provider: openai
@@ -24,7 +24,7 @@ methods:
       - few_shot
       - chain_of_thought
   
-  gape:
+  gepa:
     population_size: 15
     generations: 8
     mutation_rate: 0.25

@@ -179,7 +179,7 @@ class GrokProvider(BaseLLMProvider):
         **kwargs
     ) -> Dict[str, Any]:
         """
-        Implement Genetic-Evolutionary Prompt Architecture for Grok models.
+        Implement Genetic Prompt Architecture for Grok models.
         
         Args:
             base_prompt: Initial prompt template
@@ -187,7 +187,7 @@ class GrokProvider(BaseLLMProvider):
             population_size: Number of prompt variants per generation
             generations: Number of evolutionary iterations
             mutation_rate: Probability of prompt mutation
-            **kwargs: Additional GAPE parameters
+            **kwargs: Additional GEPA parameters
                 - fitness_function: Function to evaluate prompt fitness
                 - crossover_method: Method for prompt crossover
                 - mutation_method: Method for prompt mutation
@@ -205,11 +205,10 @@ class GrokProvider(BaseLLMProvider):
             RateLimitError: If rate limits exceeded
             ConfigurationError: If parameters are invalid
         """
-        # This is a simplified implementation of GAPE
-        # In a production system, this would be more sophisticated
-        from ..evaluation.gape import GAPEOptimizer
+        # Use DSPy's GEPA implementation
+        from ..evaluation.gepa import GEPAOptimizer
         
-        optimizer = GAPEOptimizer(
+        optimizer = GEPAOptimizer(
             provider=self,
             base_prompt=base_prompt,
             target_task=target_task,
