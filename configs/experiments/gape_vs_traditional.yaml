@@ -1,0 +1,37 @@
+name: "GAPE vs Traditional Prompting Comparison"
+description: "Compare GAPE method against traditional prompting techniques"
+  
+models:
+  - provider: openai
+    model: gpt-4
+  - provider: gemini
+    model: gemini-pro
+  - provider: grok
+    model: grok-1
+
+tasks:
+  - name: question_answering
+    dataset: squad_v2
+    metrics: [accuracy, f1_score, bleu]
+  - name: summarization
+    dataset: cnn_dailymail
+    metrics: [rouge_l, bert_score]
+
+methods:
+  traditional:
+    methods:
+      - zero_shot
+      - few_shot
+      - chain_of_thought
+  
+  gape:
+    population_size: 15
+    generations: 8
+    mutation_rate: 0.25
+    fitness_function: composite_score
+
+output:
+  format: [json, csv, html]
+  include_plots: true
+  save_intermediate: true
+  output_dir: "./results"

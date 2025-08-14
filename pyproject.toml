@@ -1,0 +1,77 @@
+[project]
+name = "llm-benchmark"
+version = "0.1.0"
+description = "CLI tool to benchmark Large Language Models with modular providers and evaluation methods"
+readme = "README.md"
+authors = [{ name = "Your Name", email = "you@example.com" }]
+requires-python = ">=3.9"
+license = { text = "MIT" }
+keywords = ["LLM", "benchmark", "DSPy", "CLI", "evaluation"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+
+# Core dependencies; provider SDKs are extras
+dependencies = [
+  "typer>=0.12.3",
+  "rich>=13.7.1",
+  "structlog>=24.1.0",
+  "pydantic>=2.7.0",
+  "pydantic-settings>=2.2.1",
+  "pyyaml>=6.0.1",
+  "tomli>=2.0.1; python_version < '3.11'",
+  "tomli-w>=1.0.0",
+  "tenacity>=8.3.0",
+  "httpx>=0.27.0",
+  "tqdm>=4.66.4",
+  "dspy-ai>=2.5.35",
+  "gepa>=0.0.2",
+]
+
+[project.optional-dependencies]
+openai = [
+  "openai>=1.30.0",
+]
+# Gemini via google-generativeai client
+gemini = [
+  "google-generativeai>=0.6.0",
+]
+# Grok/X.AI will be accessed via OpenAI-compatible APIs; no extra needed beyond openai
+# Keep a separate extra for clarity if future native SDK emerges
+grok = [
+  "openai>=1.30.0",
+]
+# Metrics extras (optional heavier deps)
+metrics = [
+  "rouge-score>=0.1.2",
+  "nltk>=3.8.1",
+]
+
+gui = [
+]
+
+[project.scripts]
+llm-benchmark = "llm_benchmark.cli.main:app"
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.uv]
+# UV will respect PEP 621 metadata. This section can pin Python or indexes if needed.
+
+[tool.ruff]
+line-length = 100
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501"]
+
+[tool.black]
+line-length = 100
+target-version = ["py39"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
