@@ -59,15 +59,22 @@ class OpenAIProvider(BaseLLMProvider):
     def generate(self, prompt: str, **kwargs) -> str:
         
         try:
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=[{"role": "user", "content": prompt}],
-                max_tokens=kwargs.get("max_tokens", self.max_tokens),
-                temperature=kwargs.get("temperature", self.temperature),
-                top_p=kwargs.get("top_p", 1.0),
-                frequency_penalty=kwargs.get("frequency_penalty", 0.0),
-                presence_penalty=kwargs.get("presence_penalty", 0.0),
-            )
+            params = {
+                "model": self.model,
+                "messages": [{"role": "user", "content": prompt}],
+                "temperature": kwargs.get("temperature", self.temperature),
+                "top_p": kwargs.get("top_p", 1.0),
+                "frequency_penalty": kwargs.get("frequency_penalty", 0.0),
+                "presence_penalty": kwargs.get("presence_penalty", 0.0),
+            }
+            
+            # Use max_completion_tokens for gpt-5 model
+            if self.model.startswith("gpt-5"):
+                params["max_completion_tokens"] = kwargs.get("max_tokens", self.max_tokens)
+            else:
+                params["max_tokens"] = kwargs.get("max_tokens", self.max_tokens)
+                
+            response = self.client.chat.completions.create(**params)
             return response.choices[0].message.content
         except openai.RateLimitError as e:
             raise RateLimitError(f"OpenAI rate limit exceeded: {str(e)}")
