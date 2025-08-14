@@ -1,8 +1,4 @@
-"""
-Compare command implementation for LLM Benchmark CLI.
 
-This module contains the implementation of the 'compare' command.
-"""
 
 import json
 from pathlib import Path
@@ -18,12 +14,9 @@ from ...utils.helpers import format_duration, timed
 from ...utils.logging import get_logger
 from .run import run_command
 
-# Initialize console for rich output
 console = Console()
 
-# Initialize logger
 logger = get_logger(__name__)
-
 
 @timed
 def compare_command(
@@ -34,25 +27,7 @@ def compare_command(
     num_samples: int = 10,
     output: Optional[Path] = None,
 ) -> Dict:
-    """
-    Compare multiple models on a specific task.
     
-    Args:
-        models: List of (provider, model) tuples
-        task: Task name (qa, summarization, etc.)
-        method: Evaluation method (zero_shot, few_shot, chain_of_thought, gape)
-        dataset: Dataset name (defaults to a standard dataset for the task)
-        num_samples: Number of samples to evaluate
-        output: Output file path
-        
-    Returns:
-        Dict with comparison results
-        
-    Raises:
-        ConfigurationError: If the configuration is invalid
-        ProviderError: If there is an error with a provider
-    """
-    # Log the start of the comparison
     logger.info(
         "compare_start",
         models=models,
@@ -62,7 +37,6 @@ def compare_command(
         num_samples=num_samples,
     )
     
-    # Display comparison information
     model_strings = [f"{provider}:{model}" for provider, model in models]
     console.print(
         Panel(
@@ -77,14 +51,12 @@ def compare_command(
         )
     )
     
-    # Run benchmarks for each model
     results = {}
     
     for provider, model in models:
         console.print(f"\n[bold]Benchmarking {provider}:{model}...[/bold]")
         
         try:
-            # Run the benchmark
             model_results = run_command(
                 provider=provider,
                 model=model,
@@ -92,11 +64,9 @@ def compare_command(
                 method=method,
                 dataset=dataset,
                 num_samples=num_samples,
-                # Don't save individual results
                 output=None,
             )
             
-            # Store the results
             results[f"{provider}:{model}"] = model_results
             
         except Exception as e:
@@ -107,13 +77,10 @@ def compare_command(
                 error=str(e),
             )
             console.print(f"[bold red]Error with {provider}:{model}:[/bold red] {str(e)}")
-            # Continue with other models
     
-    # Display comparison results
     if results:
         _display_comparison(results)
         
-        # Save results if output path provided
         if output:
             _save_results(
                 output,
@@ -128,7 +95,6 @@ def compare_command(
     else:
         console.print("[bold red]No results to compare[/bold red]")
     
-    # Log successful completion
     logger.info(
         "compare_complete",
         models=models,
@@ -141,28 +107,18 @@ def compare_command(
     
     return results
 
-
 def _display_comparison(results: Dict[str, Dict[str, float]]) -> None:
-    """
-    Display comparison results.
     
-    Args:
-        results: Dict mapping model names to benchmark results
-    """
-    # Get all metrics
     all_metrics = set()
     for model_results in results.values():
         all_metrics.update(model_results.keys())
     
-    # Create a table for the results
     table = Table(title="Model Comparison")
     table.add_column("Metric", style="cyan")
     
-    # Add columns for each model
     for model in results.keys():
         table.add_column(model, style="green")
     
-    # Add rows for each metric
     for metric in sorted(all_metrics):
         row = [metric]
         
@@ -175,10 +131,8 @@ def _display_comparison(results: Dict[str, Dict[str, float]]) -> None:
         
         table.add_row(*row)
     
-    # Display the table
     console.print(table)
     
-    # Determine best model for each metric
     console.print("\n[bold]Best model per metric:[/bold]")
     for metric in sorted(all_metrics):
         best_model = None
@@ -196,19 +150,10 @@ def _display_comparison(results: Dict[str, Dict[str, float]]) -> None:
                 f"([cyan]{best_value:.4f}[/cyan])"
             )
 
-
 def _save_results(output_path: Path, results: Dict) -> None:
-    """
-    Save comparison results to a file.
     
-    Args:
-        output_path: Output file path
-        results: Comparison results
-    """
-    # Create parent directory if it doesn't exist
     output_path.parent.mkdir(parents=True, exist_ok=True)
     
-    # Determine output format based on file extension
     if output_path.suffix.lower() == ".json":
         with open(output_path, "w") as f:
             json.dump(results, f, indent=2)
@@ -217,16 +162,13 @@ def _save_results(output_path: Path, results: Dict) -> None:
         with open(output_path, "w", newline="") as f:
             writer = csv.writer(f)
             
-            # Write header
             header = ["Metric"] + list(results["results"].keys())
             writer.writerow(header)
             
-            # Get all metrics
             all_metrics = set()
             for model_results in results["results"].values():
                 all_metrics.update(model_results.keys())
             
-            # Write rows
             for metric in sorted(all_metrics):
                 row = [metric]
                 for model in results["results"].keys():
@@ -234,7 +176,6 @@ def _save_results(output_path: Path, results: Dict) -> None:
                     row.append(str(value))
                 writer.writerow(row)
     else:
-        # Default to JSON
         with open(output_path, "w") as f:
             json.dump(results, f, indent=2)
     

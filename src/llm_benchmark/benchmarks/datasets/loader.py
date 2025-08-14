@@ -1,30 +1,11 @@
-"""
-Dataset loader for LLM Benchmark CLI.
 
-This module contains functions for loading benchmark datasets.
-"""
 
 from typing import Any, Dict, List, Optional
 
 from ...core.exceptions import DatasetError
 
-
 def load_dataset(dataset_name: str, num_samples: int = 10) -> List[Dict[str, Any]]:
-    """
-    Load samples from a dataset.
     
-    Args:
-        dataset_name: Name of the dataset to load
-        num_samples: Number of samples to load
-        
-    Returns:
-        List of dataset samples
-        
-    Raises:
-        DatasetError: If the dataset cannot be loaded
-    """
-    # In a production implementation, this would load from actual datasets
-    # For now, we return mock data based on the dataset name
     
     try:
         if dataset_name == "squad_v2":
@@ -36,24 +17,13 @@ def load_dataset(dataset_name: str, num_samples: int = 10) -> List[Dict[str, Any
         elif dataset_name == "glue":
             return _load_glue_samples(num_samples)
         else:
-            # Default to generic samples
             return _load_generic_samples(num_samples)
             
     except Exception as e:
         raise DatasetError(f"Failed to load dataset '{dataset_name}': {str(e)}")
 
-
 def _load_squad_samples(num_samples: int) -> List[Dict[str, Any]]:
-    """
-    Load samples from the SQuAD dataset.
     
-    Args:
-        num_samples: Number of samples to load
-        
-    Returns:
-        List of SQuAD samples
-    """
-    # Mock SQuAD samples
     samples = [
         {
             "question": "What is the capital of France?",
@@ -82,24 +52,13 @@ def _load_squad_samples(num_samples: int) -> List[Dict[str, Any]]:
         },
     ]
     
-    # Repeat samples if needed
     while len(samples) < num_samples:
         samples.extend(samples[:num_samples - len(samples)])
     
     return samples[:num_samples]
 
-
 def _load_cnn_dailymail_samples(num_samples: int) -> List[Dict[str, Any]]:
-    """
-    Load samples from the CNN/Daily Mail dataset.
     
-    Args:
-        num_samples: Number of samples to load
-        
-    Returns:
-        List of CNN/Daily Mail samples
-    """
-    # Mock CNN/Daily Mail samples
     samples = [
         {
             "text": "The Mona Lisa, painted by Leonardo da Vinci in the early 16th century, is one of the most famous paintings in the world. It is housed in the Louvre Museum in Paris, France. The painting is known for its subtle smile and mysterious gaze that seems to follow viewers around the room. It has been the subject of numerous studies, theories, and even theft attempts throughout history.",
@@ -115,24 +74,13 @@ def _load_cnn_dailymail_samples(num_samples: int) -> List[Dict[str, Any]]:
         },
     ]
     
-    # Repeat samples if needed
     while len(samples) < num_samples:
         samples.extend(samples[:num_samples - len(samples)])
     
     return samples[:num_samples]
 
-
 def _load_wmt16_samples(num_samples: int) -> List[Dict[str, Any]]:
-    """
-    Load samples from the WMT16 translation dataset.
     
-    Args:
-        num_samples: Number of samples to load
-        
-    Returns:
-        List of WMT16 samples
-    """
-    # Mock WMT16 samples
     samples = [
         {
             "input": "The weather is beautiful today.",
@@ -148,24 +96,13 @@ def _load_wmt16_samples(num_samples: int) -> List[Dict[str, Any]]:
         },
     ]
     
-    # Repeat samples if needed
     while len(samples) < num_samples:
         samples.extend(samples[:num_samples - len(samples)])
     
     return samples[:num_samples]
 
-
 def _load_glue_samples(num_samples: int) -> List[Dict[str, Any]]:
-    """
-    Load samples from the GLUE benchmark dataset.
     
-    Args:
-        num_samples: Number of samples to load
-        
-    Returns:
-        List of GLUE samples
-    """
-    # Mock GLUE samples (sentiment analysis)
     samples = [
         {
             "input": "This movie was fantastic! I loved every minute of it.",
@@ -189,24 +126,13 @@ def _load_glue_samples(num_samples: int) -> List[Dict[str, Any]]:
         },
     ]
     
-    # Repeat samples if needed
     while len(samples) < num_samples:
         samples.extend(samples[:num_samples - len(samples)])
     
     return samples[:num_samples]
 
-
 def _load_generic_samples(num_samples: int) -> List[Dict[str, Any]]:
-    """
-    Load generic samples for unknown datasets.
     
-    Args:
-        num_samples: Number of samples to load
-        
-    Returns:
-        List of generic samples
-    """
-    # Generic samples that can work with most tasks
     samples = [
         {
             "input": "What is machine learning?",
@@ -226,7 +152,6 @@ def _load_generic_samples(num_samples: int) -> List[Dict[str, Any]]:
         },
     ]
     
-    # Repeat samples if needed
     while len(samples) < num_samples:
         samples.extend(samples[:num_samples - len(samples)])
     

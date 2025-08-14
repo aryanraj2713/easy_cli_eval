@@ -1,15 +1,10 @@
-"""
-Core data models for the LLM Benchmark CLI.
 
-This module contains Pydantic models used for configuration, results, and data validation.
-"""
 
 from typing import Any, Dict, List, Optional, Union
 from pydantic import BaseModel, Field
 
-
 class ModelConfig(BaseModel):
-    """Configuration for a specific LLM model."""
+    
     
     provider: str = Field(..., description="Provider name (e.g., 'openai', 'gemini', 'grok')")
     model: str = Field(..., description="Model name (e.g., 'gpt-4', 'gemini-pro')")
@@ -18,9 +13,8 @@ class ModelConfig(BaseModel):
     parameters: Dict[str, Any] = Field(default_factory=dict, 
                                       description="Model-specific parameters")
 
-
 class TaskConfig(BaseModel):
-    """Configuration for a benchmark task."""
+    
     
     name: str = Field(..., description="Task name (e.g., 'question_answering', 'summarization')")
     dataset: str = Field(..., description="Dataset name (e.g., 'squad_v2', 'cnn_dailymail')")
@@ -29,17 +23,15 @@ class TaskConfig(BaseModel):
     parameters: Dict[str, Any] = Field(default_factory=dict, 
                                       description="Task-specific parameters")
 
-
 class TraditionalMethodConfig(BaseModel):
-    """Configuration for traditional prompting methods."""
+    
     
     methods: List[str] = Field(..., description="Methods to use (e.g., 'zero_shot', 'few_shot')")
     parameters: Dict[str, Any] = Field(default_factory=dict, 
                                       description="Method-specific parameters")
 
-
 class GapeMethodConfig(BaseModel):
-    """Configuration for GAPE (Genetic-Evolutionary Prompt Architecture)."""
+    
     
     population_size: int = Field(10, description="Number of prompt variants per generation")
     generations: int = Field(5, description="Number of evolutionary iterations")
@@ -49,16 +41,14 @@ class GapeMethodConfig(BaseModel):
     parameters: Dict[str, Any] = Field(default_factory=dict, 
                                       description="GAPE-specific parameters")
 
-
 class MethodsConfig(BaseModel):
-    """Configuration for evaluation methods."""
+    
     
     traditional: Optional[TraditionalMethodConfig] = None
     gape: Optional[GapeMethodConfig] = None
 
-
 class OutputConfig(BaseModel):
-    """Configuration for benchmark output."""
+    
     
     format: List[str] = Field(default_factory=lambda: ["json"], 
                              description="Output formats (e.g., 'json', 'csv', 'html')")
@@ -66,9 +56,8 @@ class OutputConfig(BaseModel):
     save_intermediate: bool = Field(False, description="Whether to save intermediate results")
     output_dir: str = Field("./results", description="Directory to save results")
 
-
 class ExperimentConfig(BaseModel):
-    """Configuration for a benchmark experiment."""
+    
     
     name: str = Field(..., description="Experiment name")
     description: Optional[str] = None
@@ -78,9 +67,8 @@ class ExperimentConfig(BaseModel):
     output: OutputConfig = Field(default_factory=OutputConfig, 
                                 description="Output configuration")
 
-
 class BenchmarkResult(BaseModel):
-    """Results from a benchmark run."""
+    
     
     model: ModelConfig
     task: TaskConfig
@@ -89,9 +77,8 @@ class BenchmarkResult(BaseModel):
     metadata: Dict[str, Any] = Field(default_factory=dict)
     raw_results: Optional[Dict[str, Any]] = None
 
-
 class GapeResult(BaseModel):
-    """Results from a GAPE run."""
+    
     
     best_prompt: str
     fitness_scores: List[float]
