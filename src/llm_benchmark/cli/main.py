@@ -9,7 +9,7 @@ import typer
 from rich.console import Console
 from rich.table import Table
 
-from .. import __version__
+from .. import __version__, providers
 from ..utils.config import load_config, validate_config
 from ..utils.logging import configure_logging, get_logger
 
