@@ -107,16 +107,14 @@ class OpenAIProvider(BaseLLMProvider):
     def to_dspy(self) -> dspy.LM:
         
         try:
-            from dspy.openai import OpenAI as DSPYOpenAI
+            import dspy
             
-            dspy_kwargs = {
-                "model": self.model,
-                "api_key": self.api_key,
-            }
-            if self.api_base:
-                dspy_kwargs["api_base"] = self.api_base
-                
-            return DSPYOpenAI(**dspy_kwargs)
+            dspy.configure(lm=self.model)
+            
+            if self.model.startswith("gpt-5"):
+                return dspy.LM(model=self.model, temperature=1.0, max_tokens=20000)
+            else:
+                return dspy.LM(model=self.model)
         except ImportError:
             raise ImportError("DSPy is required for this functionality.")
     

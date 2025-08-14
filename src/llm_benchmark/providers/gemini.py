@@ -107,13 +107,13 @@ class GeminiProvider(BaseLLMProvider):
     
     def to_dspy(self) -> dspy.LM:
         
-        from ..utils.dspy_wrappers import GeminiDSPyWrapper
-        return GeminiDSPyWrapper(
-            model=self.model,
-            api_key=self.api_key,
-            temperature=self.temperature,
-            max_tokens=self.max_output_tokens,
-        )
+        try:
+            import dspy
+            
+            dspy.configure(lm=self.model)
+            return dspy.LM(model=self.model)
+        except ImportError:
+            raise ImportError("DSPy is required for this functionality.")
     
     def gepa(
         self,

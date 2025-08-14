@@ -96,13 +96,10 @@ class GrokProvider(BaseLLMProvider):
     def to_dspy(self) -> dspy.LM:
         
         try:
-            from dspy.openai import OpenAI as DSPYOpenAI
+            import dspy
             
-            return DSPYOpenAI(
-                model=self.model,
-                api_key=self.api_key,
-                api_base=self.api_base,
-            )
+            dspy.configure(lm=self.model)
+            return dspy.LM(model=self.model)
         except ImportError:
             raise ImportError("DSPy is required for this functionality.")
     
