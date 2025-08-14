@@ -1,5 +1,5 @@
-name: "GEPA Evaluation for GPT-5 and Gemini"
-description: "Evaluate GEPA optimization performance on question answering task"
+name: "DSPy and GEPA Evaluation for GPT-5 and Gemini"
+description: "Evaluate DSPy (default) and GEPA optimization performance on question answering task"
 
 models:
   - provider: openai
@@ -14,6 +14,11 @@ tasks:
     num_samples: 10
 
 methods:
+  dspy:
+    method: chain_of_thought
+    num_threads: 2
+    metrics: [accuracy, f1_score, semantic_similarity]
+  
   gepa:
     population_size: 10
     generations: 5
@@ -25,4 +30,4 @@ output:
   format: [json, csv]
   include_plots: false
   save_intermediate: true
-  output_dir: "./gepa_results"
+  output_dir: "./results/dspy_gepa_evaluation"

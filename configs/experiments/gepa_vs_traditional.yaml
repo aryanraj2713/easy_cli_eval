@@ -1,5 +1,5 @@
-name: "GEPA vs Traditional Prompting Comparison"
-description: "Compare GEPA method against traditional prompting techniques"
+name: "DSPy, GEPA, and Traditional Prompting Comparison"
+description: "Compare DSPy (default), GEPA, and traditional prompting techniques across multiple models"
   
 models:
   - provider: openai
@@ -18,6 +18,11 @@ tasks:
     metrics: [rouge_l, bert_score]
 
 methods:
+  dspy:
+    method: chain_of_thought
+    num_threads: 4
+    metrics: [accuracy, f1_score, semantic_similarity]
+  
   traditional:
     methods:
       - zero_shot
@@ -34,4 +39,4 @@ output:
   format: [json, csv, html]
   include_plots: true
   save_intermediate: true
-  output_dir: "./results"
+  output_dir: "./results/dspy_gepa_traditional_comparison"
