@@ -3,11 +3,11 @@ description: "Compare GAPE method against traditional prompting techniques"
   
 models:
   - provider: openai
-    model: gpt-4
+    model: gpt-5
   - provider: gemini
-    model: gemini-pro
+    model: gemini-2.5-pro
   - provider: grok
-    model: grok-1
+    model: grok-2
 
 tasks:
   - name: question_answering
