@@ -130,20 +130,28 @@ def _create_evaluator(method: str, provider_instance):
         from ...evaluation.traditional import TraditionalEvaluator
         return TraditionalEvaluator(provider=provider_instance, method=method)
     elif method == "gepa":
+        from ...evaluation.gepa import GEPAOptimizer
         from ...evaluation.base import BaseEvaluator
         
         class GEPAEvaluator(BaseEvaluator):
             def evaluate(self, model, dataset, config):
-                result = model.gepa(
+                optimizer = GEPAOptimizer(
+                    provider=model,
                     base_prompt=f"Task: {config['task']}\nDataset: {dataset}",
                     target_task=config['task'],
+                    auto_budget="light",
+                    dataset=dataset
                 )
-                return result['final_metrics']
+                result = optimizer.run()
+                return result.get('eval_results', {}) or {"accuracy": 0.0}
             
             def get_required_config(self):
                 return ["task"]
         
         return GEPAEvaluator(provider=provider_instance)
+    elif method == "dspy":
+        from ...evaluation.dspy_evaluator import DSPyEvaluator
+        return DSPyEvaluator(provider=provider_instance, method="chain_of_thought")
     else:
         raise ConfigurationError(f"Invalid method: {method}")
 
