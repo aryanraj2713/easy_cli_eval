@@ -1,0 +1,37 @@
+name: "GEPA vs Traditional Prompting Comparison"
+description: "Compare GEPA method against traditional prompting techniques"
+  
+models:
+  - provider: openai
+    model: gpt-5
+  - provider: gemini
+    model: gemini-2.5-pro
+  - provider: grok
+    model: grok-2
+
+tasks:
+  - name: question_answering
+    dataset: squad_v2
+    metrics: [accuracy, f1_score, bleu]
+  - name: summarization
+    dataset: cnn_dailymail
+    metrics: [rouge_l, bert_score]
+
+methods:
+  traditional:
+    methods:
+      - zero_shot
+      - few_shot
+      - chain_of_thought
+  
+  gepa:
+    population_size: 15
+    generations: 8
+    mutation_rate: 0.25
+    fitness_function: composite_score
+
+output:
+  format: [json, csv, html]
+  include_plots: true
+  save_intermediate: true
+  output_dir: "./results"

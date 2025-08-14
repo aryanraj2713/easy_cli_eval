@@ -1,7 +1,7 @@
 """
-GAPE (Genetic-Evolutionary Prompt Architecture) implementation for LLM Benchmark CLI.
+GEPA (Genetic Prompt Architecture) implementation for LLM Benchmark CLI.
 
-This module contains the DSPy-based implementation of GAPE for optimizing prompts.
+This module contains the DSPy-based implementation of GEPA for optimizing prompts.
 """
 
 from typing import Any, Dict, List, Optional
@@ -13,9 +13,9 @@ from ..core.exceptions import ConfigurationError, EvaluationError
 from ..providers.base import BaseLLMProvider
 
 
-class GAPEOptimizer:
+class GEPAOptimizer:
     """
-    Genetic-Evolutionary Prompt Architecture optimizer using DSPy's GEPA.
+    Genetic Prompt Architecture optimizer using DSPy's GEPA.
     
     This class provides a wrapper around DSPy's GeneticPromptOptimizer for prompt optimization.
     """
@@ -31,7 +31,7 @@ class GAPEOptimizer:
         **kwargs
     ):
         """
-        Initialize the GAPE optimizer.
+        Initialize the GEPA optimizer.
         
         Args:
             provider: The LLM provider to use
@@ -40,7 +40,7 @@ class GAPEOptimizer:
             population_size: Number of prompt variants per generation
             generations: Number of evolutionary iterations
             mutation_rate: Probability of prompt mutation
-            **kwargs: Additional GAPE parameters
+            **kwargs: Additional GEPA parameters
                 - fitness_function: Function to evaluate prompt fitness
                 - crossover_method: Method for prompt crossover
                 - mutation_method: Method for prompt mutation
@@ -78,7 +78,7 @@ class GAPEOptimizer:
     
     def run(self) -> Dict[str, Any]:
         """
-        Run the GAPE optimization process using DSPy's GEPA.
+        Run the GEPA optimization process using DSPy's GEPA.
         
         Returns:
             Dict containing:
@@ -153,7 +153,7 @@ class GAPEOptimizer:
             }
             
         except Exception as e:
-            raise EvaluationError(f"GAPE optimization failed: {str(e)}")
+            raise EvaluationError(f"GEPA optimization failed: {str(e)}")
     
     def _evaluate_prompt(self, prompt: str) -> Dict[str, float]:
         """
