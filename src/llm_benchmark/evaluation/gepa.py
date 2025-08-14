@@ -7,6 +7,7 @@ from dspy.evaluate import Evaluate
 
 from ..core.exceptions import ConfigurationError, EvaluationError
 from ..providers.base import BaseLLMProvider
+from .metrics.dspy_metrics import evaluate_with_dspy
 
 class GEPAOptimizer:
     
@@ -106,58 +107,24 @@ class GEPAOptimizer:
                 valset=val_data
             )
             
-            # Evaluate the optimized program
-            evaluator = Evaluate(
-                optimized_program,
-                metric=metric_fn,
+            # Evaluate the optimized program using our unified evaluation function
+            eval_results = evaluate_with_dspy(
+                program=optimized_program,
+                dataset=val_data,
+                metric_name="accuracy",
                 num_threads=1
             )
-            
-            eval_results = evaluator(val_data)
             
             # Extract the results
             return {
                 "best_prompt": str(optimized_program),
                 "optimized_program": optimized_program,
                 "detailed_results": optimized_program.detailed_results if hasattr(optimized_program, 'detailed_results') else None,
-                "eval_results": eval_results,
-                "average_score": eval_results.score
+                "eval_results": eval_results["results"],
+                "average_score": eval_results["score"]
             }
             
         except Exception as e:
             raise EvaluationError(f"GEPA optimization failed: {str(e)}")
     
-    def evaluate_with_dspy(self, program, dataset):
-        """
-        Evaluate a DSPy program using dspy.Evaluate.
-        
-        Args:
-            program: The DSPy program to evaluate
-            dataset: The dataset to evaluate on
-            
-        Returns:
-            Evaluation results
-        """
-        try:
-            # Define a simple metric function
-            def metric_fn(gold, pred):
-                if hasattr(gold, 'output') and hasattr(pred, 'output'):
-                    return 1.0 if gold.output.strip() == pred.output.strip() else 0.0
-                return 0.0
-            
-            # Create evaluator
-            evaluator = Evaluate(
-                program,
-                metric=metric_fn,
-                num_threads=1
-            )
-            
-            # Run evaluation
-            results = evaluator(dataset)
-            
-            return {
-                "score": results.score,
-                "results": results
-            }
-        except Exception as e:
-            raise EvaluationError(f"DSPy evaluation failed: {str(e)}")
+

@@ -6,6 +6,7 @@ from dspy.evaluate import Evaluate
 from ..core.exceptions import ConfigurationError, EvaluationError
 from ..providers.base import BaseLLMProvider
 from .base import BaseEvaluator
+from .metrics.dspy_metrics import create_dspy_metric, evaluate_with_dspy
 
 class DSPyEvaluator(BaseEvaluator):
     
@@ -14,6 +15,7 @@ class DSPyEvaluator(BaseEvaluator):
         
         self.method = kwargs.get("method", "chain_of_thought")
         self.num_threads = kwargs.get("num_threads", 1)
+        self.metric_name = kwargs.get("metric", "accuracy")
         
         try:
             self.dspy_lm = provider.to_dspy()
@@ -37,23 +39,21 @@ class DSPyEvaluator(BaseEvaluator):
                 ) for example in examples
             ]
             
-            # Define the metric function
-            metric_fn = self._create_metric_fn(config.get("task", ""))
+            # Get the appropriate metric name based on the task
+            metric_name = self._get_metric_name(config.get("task", ""))
             
-            # Create evaluator
-            evaluator = Evaluate(
-                program,
-                metric=metric_fn,
+            # Use the evaluate_with_dspy function from dspy_metrics
+            eval_results = evaluate_with_dspy(
+                program=program,
+                dataset=dspy_examples,
+                metric_name=metric_name,
                 num_threads=self.num_threads
             )
             
-            # Run evaluation
-            results = evaluator(dspy_examples)
-            
             # Return metrics
             return {
-                "accuracy": results.score,
-                "detailed_results": results
+                metric_name: eval_results["score"],
+                "detailed_results": eval_results["results"]
             }
             
         except Exception as e:
@@ -112,18 +112,22 @@ class DSPyEvaluator(BaseEvaluator):
         
         return ZeroShotProgram(task)
     
-    def _create_metric_fn(self, task: str) -> Callable:
-        def metric_fn(gold, pred):
-            if hasattr(gold, 'output') and hasattr(pred, 'output'):
-                if task == "question_answering":
-                    # For QA tasks, check if the answer is contained in the prediction
-                    return 1.0 if gold.output.strip() in pred.output.strip() else 0.0
-                else:
-                    # For other tasks, check exact match
-                    return 1.0 if gold.output.strip() == pred.output.strip() else 0.0
-            return 0.0
+    def _get_metric_name(self, task: str) -> str:
+        """
+        Get the appropriate metric name based on the task.
         
-        return metric_fn
+        Args:
+            task: The task name
+            
+        Returns:
+            The name of the metric to use
+        """
+        if task == "question_answering" or task == "qa":
+            return "contains"
+        elif task == "summarization":
+            return "semantic_similarity"
+        else:
+            return self.metric_name
     
     def _load_dataset(self, dataset: str, num_samples: int) -> List[Dict[str, Any]]:
         from ...benchmarks.datasets.loader import load_dataset
