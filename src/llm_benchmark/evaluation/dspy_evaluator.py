@@ -25,13 +25,10 @@ class DSPyEvaluator(BaseEvaluator):
     
     def evaluate(self, model: BaseLLMProvider, dataset: str, config: Dict[str, Any]) -> Dict[str, float]:
         try:
-            # Create a DSPy program based on the method
             program = self._create_program(config.get("task", ""))
             
-            # Load dataset
             examples = self._load_dataset(dataset, config.get("num_samples", 10))
             
-            # Convert to DSPy examples
             dspy_examples = [
                 dspy.Example(
                     input=example.get("input", example.get("question", "")),
@@ -39,10 +36,8 @@ class DSPyEvaluator(BaseEvaluator):
                 ) for example in examples
             ]
             
-            # Get the appropriate metric name based on the task
             metric_name = self._get_metric_name(config.get("task", ""))
             
-            # Use the evaluate_with_dspy function from dspy_metrics
             eval_results = evaluate_with_dspy(
                 program=program,
                 dataset=dspy_examples,
@@ -50,7 +45,6 @@ class DSPyEvaluator(BaseEvaluator):
                 num_threads=self.num_threads
             )
             
-            # Return metrics
             return {
                 metric_name: eval_results["score"],
                 "detailed_results": eval_results["results"]
@@ -67,7 +61,7 @@ class DSPyEvaluator(BaseEvaluator):
             return self._create_chain_of_thought(task)
         elif self.method == "few_shot":
             return self._create_few_shot(task)
-        else:  # Default to zero-shot
+        else:
             return self._create_zero_shot(task)
     
     def _create_chain_of_thought(self, task: str) -> dspy.Module:
@@ -113,15 +107,6 @@ class DSPyEvaluator(BaseEvaluator):
         return ZeroShotProgram(task)
     
     def _get_metric_name(self, task: str) -> str:
-        """
-        Get the appropriate metric name based on the task.
-        
-        Args:
-            task: The task name
-            
-        Returns:
-            The name of the metric to use
-        """
         if task == "question_answering" or task == "qa":
             return "contains"
         elif task == "summarization":

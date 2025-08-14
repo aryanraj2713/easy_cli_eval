@@ -64,10 +64,8 @@ class OpenAIProvider(BaseLLMProvider):
                 "messages": [{"role": "user", "content": prompt}],
             }
             
-            # Handle GPT-5 specific parameters
             if self.model.startswith("gpt-5"):
                 params["max_completion_tokens"] = kwargs.get("max_tokens", self.max_tokens)
-                # GPT-5 only supports temperature=1.0
             else:
                 params["max_tokens"] = kwargs.get("max_tokens", self.max_tokens)
                 params["temperature"] = kwargs.get("temperature", self.temperature)

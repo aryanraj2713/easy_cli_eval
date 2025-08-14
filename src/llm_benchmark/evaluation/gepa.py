@@ -36,7 +36,6 @@ class GEPAOptimizer:
         
         try:
             self.dspy_lm = provider.to_dspy()
-            # Configure a reflection LM - ideally this would be a strong model
             self.reflection_lm = self.dspy_lm
         except Exception as e:
             raise ConfigurationError(f"Failed to convert provider to DSPy language model: {str(e)}")
@@ -44,10 +43,8 @@ class GEPAOptimizer:
     def run(self) -> Dict[str, Any]:
         
         try:
-            # Configure DSPy to use our language model
             dspy.configure(lm=self.dspy_lm)
             
-            # Define the task program
             class TaskProgram(dspy.Module):
                 def __init__(self, task_description):
                     super().__init__()
@@ -57,13 +54,10 @@ class GEPAOptimizer:
                 def forward(self, input_text):
                     return self.predictor(input=input_text).output
             
-            # Create training and validation datasets
             if self.dataset:
-                # If dataset is provided, use it
                 train_data = self.dataset[:len(self.dataset)//2]
                 val_data = self.dataset[len(self.dataset)//2:]
             else:
-                # Otherwise create a simple example dataset
                 train_data = [
                     dspy.Example(input=f"Sample task input {i}", output=f"Sample output {i}")
                     for i in range(5)
@@ -73,15 +67,12 @@ class GEPAOptimizer:
                     for i in range(3)
                 ]
             
-            # Define evaluation metric function
             def metric_fn(gold, pred, trace=None):
-                # Simple accuracy metric - in a real implementation, this would be more sophisticated
                 if hasattr(gold, 'output') and hasattr(pred, 'output'):
                     score = 1.0 if gold.output.strip() == pred.output.strip() else 0.0
                 else:
                     score = 0.0
                 
-                # Return score with feedback for GEPA
                 return {
                     'score': score,
                     'feedback': f"The model {'correctly' if score > 0.5 else 'incorrectly'} solved the task. "
@@ -89,10 +80,8 @@ class GEPAOptimizer:
                                 f"Please improve the reasoning process to better solve this type of problem."
                 }
             
-            # Create the program
             program = TaskProgram(self.target_task)
             
-            # Create the GEPA optimizer
             gepa = dspy.GEPA(
                 metric=metric_fn,
                 auto=self.auto_budget,
@@ -100,14 +89,12 @@ class GEPAOptimizer:
                 track_stats=True
             )
             
-            # Compile the program with GEPA
             optimized_program = gepa.compile(
                 program,
                 trainset=train_data,
                 valset=val_data
             )
             
-            # Evaluate the optimized program using our unified evaluation function
             eval_results = evaluate_with_dspy(
                 program=optimized_program,
                 dataset=val_data,
@@ -115,7 +102,6 @@ class GEPAOptimizer:
                 num_threads=1
             )
             
-            # Extract the results
             return {
                 "best_prompt": str(optimized_program),
                 "optimized_program": optimized_program,

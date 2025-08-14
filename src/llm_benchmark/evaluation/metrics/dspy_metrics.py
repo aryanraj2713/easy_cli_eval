@@ -110,7 +110,6 @@ def exact_match_metric(gold, pred, trace=None):
             return answer_exact_match(gold.output, pred.output)
         return 0.0
     except ImportError:
-        # Fall back to simple accuracy if dspy.evaluate is not available
         return accuracy_metric(gold, pred, trace)
 
 def semantic_similarity_metric(gold, pred, trace=None):
@@ -132,21 +131,17 @@ def semantic_similarity_metric(gold, pred, trace=None):
         if not hasattr(gold, 'output') or not hasattr(pred, 'output'):
             return 0.0
         
-        # Load the model (this should ideally be cached)
         model = SentenceTransformer('all-MiniLM-L6-v2')
         
-        # Encode the sentences
         gold_embedding = model.encode(_normalize_text(gold.output))
         pred_embedding = model.encode(_normalize_text(pred.output))
         
-        # Calculate cosine similarity
         similarity = np.dot(gold_embedding, pred_embedding) / (
             np.linalg.norm(gold_embedding) * np.linalg.norm(pred_embedding)
         )
         
         return float(similarity)
     except ImportError:
-        # Fall back to F1 score if sentence_transformers is not available
         return f1_score_metric(gold, pred, trace)
 
 def evaluate_with_dspy(program, dataset, metric_name="accuracy", num_threads=1):
@@ -162,17 +157,14 @@ def evaluate_with_dspy(program, dataset, metric_name="accuracy", num_threads=1):
     Returns:
         Evaluation results
     """
-    # Get the appropriate metric function
     metric_fn = create_dspy_metric(metric_name)
     
-    # Create evaluator
     evaluator = Evaluate(
         program,
         metric=metric_fn,
         num_threads=num_threads
     )
     
-    # Run evaluation
     results = evaluator(dataset)
     
     return {
