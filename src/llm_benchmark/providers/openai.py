@@ -62,17 +62,18 @@ class OpenAIProvider(BaseLLMProvider):
             params = {
                 "model": self.model,
                 "messages": [{"role": "user", "content": prompt}],
-                "temperature": kwargs.get("temperature", self.temperature),
-                "top_p": kwargs.get("top_p", 1.0),
-                "frequency_penalty": kwargs.get("frequency_penalty", 0.0),
-                "presence_penalty": kwargs.get("presence_penalty", 0.0),
             }
             
-            # Use max_completion_tokens for gpt-5 model
+            # Handle GPT-5 specific parameters
             if self.model.startswith("gpt-5"):
                 params["max_completion_tokens"] = kwargs.get("max_tokens", self.max_tokens)
+                # GPT-5 only supports temperature=1.0
             else:
                 params["max_tokens"] = kwargs.get("max_tokens", self.max_tokens)
+                params["temperature"] = kwargs.get("temperature", self.temperature)
+                params["top_p"] = kwargs.get("top_p", 1.0)
+                params["frequency_penalty"] = kwargs.get("frequency_penalty", 0.0)
+                params["presence_penalty"] = kwargs.get("presence_penalty", 0.0)
                 
             response = self.client.chat.completions.create(**params)
             return response.choices[0].message.content
