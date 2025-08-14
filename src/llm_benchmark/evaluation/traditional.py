@@ -63,13 +63,13 @@ class TraditionalEvaluator(BaseEvaluator):
     def _create_zero_shot_prompt(self, sample: Dict[str, Any], task: str) -> str:
         
         if task == "question_answering":
-            return f
+            return f"Answer the following question accurately and concisely:\n\nQuestion: {sample['question']}\n\nContext: {sample.get('context', '')}\n\nAnswer:"
             
         elif task == "summarization":
-            return f
+            return f"Summarize the following text in a concise and accurate manner:\n\nText: {sample['text']}\n\nSummary:"
             
         else:
-            return f
+            return f"Perform the following {task} task:\n\nInput: {sample['input']}\n\nOutput:"
     
     def _create_few_shot_prompt(self, sample: Dict[str, Any], task: str) -> str:
         
@@ -120,13 +120,13 @@ class TraditionalEvaluator(BaseEvaluator):
     def _create_chain_of_thought_prompt(self, sample: Dict[str, Any], task: str) -> str:
         
         if task == "question_answering":
-            return f
+            return f"Answer the following question accurately and concisely.\nThink step by step to solve the problem, then provide your final answer.\n\nQuestion: {sample['question']}\n\nContext: {sample.get('context', '')}\n\nLet's think through this step by step:\n1."
             
         elif task == "summarization":
-            return f
+            return f"Summarize the following text in a concise and accurate manner.\nFirst, identify the key points, then organize them into a coherent summary.\n\nText: {sample['text']}\n\nLet's break down the key points:\n1."
             
         else:
-            return f
+            return f"Perform the following {task} task.\nThink step by step to solve the problem, then provide your final answer.\n\nInput: {sample['input']}\n\nLet's think through this step by step:\n1."
     
     def _evaluate_responses(
         self, 
