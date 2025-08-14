@@ -33,7 +33,7 @@ class DSPyEvaluator(BaseEvaluator):
                 dspy.Example(
                     input=example.get("input", example.get("question", "")),
                     output=example.get("output", example.get("answer", ""))
-                ) for example in examples
+                ).with_inputs("input") for example in examples
             ]
             
             metric_name = self._get_metric_name(config.get("task", ""))
@@ -115,5 +115,5 @@ class DSPyEvaluator(BaseEvaluator):
             return self.metric_name
     
     def _load_dataset(self, dataset: str, num_samples: int) -> List[Dict[str, Any]]:
-        from ...benchmarks.datasets.loader import load_dataset
+        from llm_benchmark.benchmarks.datasets.loader import load_dataset
         return load_dataset(dataset, num_samples)

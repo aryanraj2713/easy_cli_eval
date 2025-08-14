@@ -160,15 +160,15 @@ def evaluate_with_dspy(program, dataset, metric_name="accuracy", num_threads=1):
     metric_fn = create_dspy_metric(metric_name)
     
     evaluator = Evaluate(
-        program,
+        devset=dataset,
         metric=metric_fn,
         num_threads=num_threads
     )
     
-    results = evaluator(dataset)
+    results = evaluator(program)
     
     return {
-        "score": results.score,
+        "score": float(results) if isinstance(results, (int, float)) else 0.0,
         "results": results
     }
 

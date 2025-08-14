@@ -162,7 +162,10 @@ def _display_results(results: Dict) -> None:
     table.add_column("Value", style="green")
     
     for metric, value in results.items():
-        table.add_row(metric, f"{value:.4f}")
+        if isinstance(value, (int, float)):
+            table.add_row(metric, f"{value:.4f}")
+        else:
+            table.add_row(metric, str(value))
     
     console.print(table)
 
