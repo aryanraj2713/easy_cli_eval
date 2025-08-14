@@ -28,7 +28,7 @@ class GeminiProvider(BaseLLMProvider):
         Initialize the Gemini provider.
         
         Args:
-            model: The model name to use (e.g., 'gemini-pro', 'gemini-ultra')
+            model: The model name to use (e.g., 'gemini-2.5-pro', 'gemini-1.5-pro', 'gemini-pro')
             **kwargs: Additional provider-specific parameters
                 - api_key: Google API key (defaults to GOOGLE_API_KEY env var)
                 - temperature: Sampling temperature

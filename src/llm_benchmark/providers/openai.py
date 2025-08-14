@@ -29,7 +29,7 @@ class OpenAIProvider(BaseLLMProvider):
         Initialize the OpenAI provider.
         
         Args:
-            model: The model name to use (e.g., 'gpt-4', 'gpt-3.5-turbo')
+            model: The model name to use (e.g., 'gpt-5', 'gpt-4o', 'gpt-4')
             **kwargs: Additional provider-specific parameters
                 - api_key: OpenAI API key (defaults to OPENAI_API_KEY env var)
                 - api_base: OpenAI API base URL (defaults to OpenAI's default)

@@ -31,7 +31,7 @@ class GrokProvider(BaseLLMProvider):
         Initialize the Grok provider.
         
         Args:
-            model: The model name to use (e.g., 'grok-1')
+            model: The model name to use (e.g., 'grok-2', 'grok-1')
             **kwargs: Additional provider-specific parameters
                 - api_key: Grok API key (defaults to GROK_API_KEY env var)
                 - api_base: Grok API base URL (defaults to GROK_BASE_URL env var)
