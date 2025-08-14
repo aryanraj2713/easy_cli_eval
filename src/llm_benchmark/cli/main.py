@@ -47,8 +47,8 @@ def run_benchmark(
     model: str = typer.Option(..., "--model", "-m", help="Model name"),
     task: str = typer.Option(..., "--task", "-t", help="Task name (qa, summarization, etc.)"),
     method: str = typer.Option(
-        "zero_shot", "--method", "-e", 
-        help="Evaluation method (zero_shot, few_shot, chain_of_thought, gepa, dspy)"
+        "dspy", "--method", "-e", 
+        help="Evaluation method (dspy, zero_shot, few_shot, chain_of_thought, gepa)"
     ),
     dataset: Optional[str] = typer.Option(
         None, "--dataset", "-d", help="Dataset name (defaults to a standard dataset for the task)"
@@ -86,8 +86,8 @@ def compare_models(
     ),
     task: str = typer.Option(..., "--task", "-t", help="Task name (qa, summarization, etc.)"),
     method: str = typer.Option(
-        "zero_shot", "--method", "-e", 
-        help="Evaluation method (zero_shot, few_shot, chain_of_thought, gepa, dspy)"
+        "dspy", "--method", "-e", 
+        help="Evaluation method (dspy, zero_shot, few_shot, chain_of_thought, gepa)"
     ),
     dataset: Optional[str] = typer.Option(
         None, "--dataset", "-d", help="Dataset name (defaults to a standard dataset for the task)"

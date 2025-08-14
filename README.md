@@ -38,14 +38,14 @@
 ### Run a Single Benchmark
 
 ```bash
-llm-benchmark run --provider openai --model gpt-5 --task qa --method zero_shot
+llm-benchmark run --provider openai --model gpt-5 --task qa
 ```
 
 Options:
 - `--provider`: Provider name (openai, gemini, grok)
 - `--model`: Model name (e.g., gpt-5, gemini-2.5-pro)
 - `--task`: Task name (qa, summarization, etc.)
-- `--method`: Evaluation method (zero_shot, few_shot, chain_of_thought, gepa, dspy)
+- `--method`: Evaluation method (default: dspy, also: zero_shot, few_shot, chain_of_thought, gepa)
 - `--dataset`: Dataset name (optional, defaults to standard dataset for task)
 - `--num-samples`: Number of samples to evaluate (default: 10)
 - `--output`: Output file path (optional)
@@ -59,7 +59,7 @@ llm-benchmark compare --models openai:gpt-5,gemini:gemini-2.5-pro --task summari
 Options:
 - `--models`: Comma-separated list of models to compare (format: provider:model)
 - `--task`: Task name (qa, summarization, etc.)
-- `--method`: Evaluation method (default: zero_shot)
+- `--method`: Evaluation method (default: dspy)
 - `--dataset`: Dataset name (optional)
 - `--num-samples`: Number of samples to evaluate (default: 10)
 - `--output`: Output file path (optional)
