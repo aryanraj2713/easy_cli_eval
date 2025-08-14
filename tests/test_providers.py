@@ -29,8 +29,8 @@ def test_provider_factory_registration():
         def to_dspy(self):
             return None
         
-        def gape(self, base_prompt, target_task, **kwargs):
-            return {"best_prompt": "Mock prompt"}
+            def gepa(self, base_prompt, target_task, **kwargs):
+                return {"best_prompt": "Mock prompt"}
     
     # Register the mock provider
     ProviderFactory.register("mock")(MockProvider)
