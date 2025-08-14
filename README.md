@@ -1,17 +1,8 @@
 # LLM Benchmark CLI
 
-Production-ready Python CLI tool for benchmarking Large Language Models with modular architecture and comprehensive evaluation capabilities. Compare performance across providers (OpenAI, Gemini, Grok/X.AI) using traditional methods and GEPA (Genetic Prompt Architecture).
+ Python CLI tool for benchmarking Large Language Models with modular architecture and comprehensive evaluation capabilities. Compare performance across providers (OpenAI, Gemini, Grok/X.AI) using traditional methods and GEPA (Genetic Prompt Architecture).
 
-## Features
 
-- **Multiple LLM Providers**: Support for OpenAI (GPT-5, GPT-4o), Google Gemini (Gemini 2.5 Pro), and Grok/X.AI (Grok-2)
-- **Modular Architecture**: Easily extend with new providers, evaluation methods, and metrics
-- **DSPy Integration**: Native DSPy evaluation with Chain of Thought, Few Shot, and Zero Shot methods
-- **GEPA Optimization**: Genetic prompt optimization using DSPy's GEPA library with integrated evaluation
-- **Traditional Methods**: Zero-shot, few-shot, and chain-of-thought prompting
-- **Advanced Metrics**: Task-appropriate metrics including accuracy, F1, semantic similarity, and exact match
-- **Experiment Configuration**: YAML-based experiment definitions
-- **Structured Logging**: Detailed logs with configurable levels
 
 ## Quickstart
 
@@ -148,17 +139,7 @@ class GroqProvider(BaseLLMProvider):
 ## Work in Progress
 
 - **Grok Integration**: Support for Grok/X.AI's API is currently in development
-- **Advanced RAG Methods**: Retrieval-augmented generation techniques will be added in future releases
-- **GUI Dashboard**: A web-based dashboard for visualizing benchmark results is planned
 
-## Notes
 
-- Provider SDKs are installed as optional extras to keep the base installation lightweight
-- DSPy integration provides native evaluation capabilities with task-appropriate metrics
-- GEPA implementation uses DSPy's GEPA library for genetic prompt optimization with integrated evaluation
-- The project follows a modular design to make it easy to extend with new capabilities
-- All commands support the `--log-level` option to control verbosity
 
-## License
 
-MIT
