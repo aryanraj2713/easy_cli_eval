@@ -69,7 +69,10 @@ class TraditionalEvaluator(BaseEvaluator):
             return f"Summarize the following text in a concise and accurate manner:\n\nText: {sample['text']}\n\nSummary:"
             
         else:
-            return f"Perform the following {task} task:\n\nInput: {sample['input']}\n\nOutput:"
+            if 'input' in sample:
+                return f"Perform the following {task} task:\n\nInput: {sample['input']}\n\nOutput:"
+            else:
+                return f"Perform the following {task} task:\n\nInput: {str(sample)}\n\nOutput:"
     
     def _create_few_shot_prompt(self, sample: Dict[str, Any], task: str) -> str:
         
@@ -126,7 +129,10 @@ class TraditionalEvaluator(BaseEvaluator):
             return f"Summarize the following text in a concise and accurate manner.\nFirst, identify the key points, then organize them into a coherent summary.\n\nText: {sample['text']}\n\nLet's break down the key points:\n1."
             
         else:
-            return f"Perform the following {task} task.\nThink step by step to solve the problem, then provide your final answer.\n\nInput: {sample['input']}\n\nLet's think through this step by step:\n1."
+            if 'input' in sample:
+                return f"Perform the following {task} task.\nThink step by step to solve the problem, then provide your final answer.\n\nInput: {sample['input']}\n\nLet's think through this step by step:\n1."
+            else:
+                return f"Perform the following {task} task.\nThink step by step to solve the problem, then provide your final answer.\n\nInput: {str(sample)}\n\nLet's think through this step by step:\n1."
     
     def _evaluate_responses(
         self, 
