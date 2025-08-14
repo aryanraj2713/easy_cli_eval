@@ -1,9 +1,9 @@
 
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Callable, Union
 
 import dspy
-from gepa import GeneticPromptOptimizer
+from dspy.evaluate import Evaluate
 
 from ..core.exceptions import ConfigurationError, EvaluationError
 from ..providers.base import BaseLLMProvider
@@ -29,113 +29,135 @@ class GEPAOptimizer:
         self.generations = generations
         self.mutation_rate = mutation_rate
         
-        self.fitness_function = kwargs.get("fitness_function", "default")
-        self.elitism = kwargs.get("elitism", 2)
+        self.auto_budget = kwargs.get("auto_budget", "light")
         self.eval_samples = kwargs.get("eval_samples", 3)
-        
-        if self.population_size < 4:
-            raise ConfigurationError("Population size must be at least 4")
-        if self.generations < 1:
-            raise ConfigurationError("Number of generations must be at least 1")
-        if not (0.0 <= self.mutation_rate <= 1.0):
-            raise ConfigurationError("Mutation rate must be between 0.0 and 1.0")
-        if self.elitism >= self.population_size:
-            raise ConfigurationError("Elitism must be less than population size")
+        self.dataset = kwargs.get("dataset", None)
         
         try:
             self.dspy_lm = provider.to_dspy()
+            # Configure a reflection LM - ideally this would be a strong model
+            self.reflection_lm = self.dspy_lm
         except Exception as e:
             raise ConfigurationError(f"Failed to convert provider to DSPy language model: {str(e)}")
     
     def run(self) -> Dict[str, Any]:
         
         try:
+            # Configure DSPy to use our language model
             dspy.configure(lm=self.dspy_lm)
             
+            # Define the task program
             class TaskProgram(dspy.Module):
-                def __init__(self):
+                def __init__(self, task_description):
                     super().__init__()
-                    self.task = self.target_task
+                    self.task_description = task_description
+                    self.predictor = dspy.ChainOfThought("input -> output")
                 
                 def forward(self, input_text):
-                    prompt = dspy.Predict("output", context=self.task)(input_text=input_text)
-                    return prompt.output
+                    return self.predictor(input=input_text).output
             
-            def evaluate_quality(gold, pred):
-                return {"quality": 0.8}  
+            # Create training and validation datasets
+            if self.dataset:
+                # If dataset is provided, use it
+                train_data = self.dataset[:len(self.dataset)//2]
+                val_data = self.dataset[len(self.dataset)//2:]
+            else:
+                # Otherwise create a simple example dataset
+                train_data = [
+                    dspy.Example(input=f"Sample task input {i}", output=f"Sample output {i}")
+                    for i in range(5)
+                ]
+                val_data = [
+                    dspy.Example(input=f"Validation task input {i}", output=f"Validation output {i}")
+                    for i in range(3)
+                ]
             
-            optimizer = GeneticPromptOptimizer(
-                task_program=TaskProgram(),
-                metric_fn=evaluate_quality,
-                population_size=self.population_size,
-                num_generations=self.generations,
-                mutation_rate=self.mutation_rate,
-                elitism=self.elitism
-            )
-            
-            best_prompt, history = optimizer.optimize(
-                initial_prompt=self.base_prompt,
-                task_description=self.target_task
-            )
-            
-            fitness_scores = []
-            evolution_history = []
-            
-            for i, gen_data in enumerate(history):
-                avg_fitness = sum(gen_data["fitness_scores"]) / len(gen_data["fitness_scores"])
-                best_idx = gen_data["fitness_scores"].index(max(gen_data["fitness_scores"]))
+            # Define evaluation metric function
+            def metric_fn(gold, pred, trace=None):
+                # Simple accuracy metric - in a real implementation, this would be more sophisticated
+                if hasattr(gold, 'output') and hasattr(pred, 'output'):
+                    score = 1.0 if gold.output.strip() == pred.output.strip() else 0.0
+                else:
+                    score = 0.0
                 
-                fitness_scores.append(gen_data["fitness_scores"][best_idx])
-                evolution_history.append({
-                    "generation": i,
-                    "best_prompt": gen_data["population"][best_idx],
-                    "best_fitness": gen_data["fitness_scores"][best_idx],
-                    "avg_fitness": avg_fitness
-                })
+                # Return score with feedback for GEPA
+                return {
+                    'score': score,
+                    'feedback': f"The model {'correctly' if score > 0.5 else 'incorrectly'} solved the task. "
+                                f"Task description: {self.target_task}. "
+                                f"Please improve the reasoning process to better solve this type of problem."
+                }
             
-            final_metrics = self._evaluate_prompt(best_prompt)
+            # Create the program
+            program = TaskProgram(self.target_task)
             
+            # Create the GEPA optimizer
+            gepa = dspy.GEPA(
+                metric=metric_fn,
+                auto=self.auto_budget,
+                reflection_lm=self.reflection_lm,
+                track_stats=True
+            )
+            
+            # Compile the program with GEPA
+            optimized_program = gepa.compile(
+                program,
+                trainset=train_data,
+                valset=val_data
+            )
+            
+            # Evaluate the optimized program
+            evaluator = Evaluate(
+                optimized_program,
+                metric=metric_fn,
+                num_threads=1
+            )
+            
+            eval_results = evaluator(val_data)
+            
+            # Extract the results
             return {
-                "best_prompt": best_prompt,
-                "fitness_scores": fitness_scores,
-                "evolution_history": evolution_history,
-                "final_metrics": final_metrics
+                "best_prompt": str(optimized_program),
+                "optimized_program": optimized_program,
+                "detailed_results": optimized_program.detailed_results if hasattr(optimized_program, 'detailed_results') else None,
+                "eval_results": eval_results,
+                "average_score": eval_results.score
             }
             
         except Exception as e:
             raise EvaluationError(f"GEPA optimization failed: {str(e)}")
     
-    def _evaluate_prompt(self, prompt: str) -> Dict[str, float]:
+    def evaluate_with_dspy(self, program, dataset):
+        """
+        Evaluate a DSPy program using dspy.Evaluate.
         
-        eval_prompt = f
-        
+        Args:
+            program: The DSPy program to evaluate
+            dataset: The dataset to evaluate on
+            
+        Returns:
+            Evaluation results
+        """
         try:
-            metrics_sum = {"accuracy": 0.0, "relevance": 0.0, "coherence": 0.0, "diversity": 0.0}
+            # Define a simple metric function
+            def metric_fn(gold, pred):
+                if hasattr(gold, 'output') and hasattr(pred, 'output'):
+                    return 1.0 if gold.output.strip() == pred.output.strip() else 0.0
+                return 0.0
             
-            for _ in range(self.eval_samples):
-                response = self.provider.generate(eval_prompt)
-                
-                for metric in metrics_sum:
-                    try:
-                        start = response.find(f'"{metric}"') + len(f'"{metric}"')
-                        start = response.find(":", start) + 1
-                        end = response.find(",", start)
-                        if end == -1:
-                            end = response.find("}", start)
-                        value_str = response[start:end].strip()
-                        value = float(value_str)
-                        metrics_sum[metric] += value
-                    except (ValueError, IndexError):
-                        pass
+            # Create evaluator
+            evaluator = Evaluate(
+                program,
+                metric=metric_fn,
+                num_threads=1
+            )
             
-            metrics = {k: v / self.eval_samples for k, v in metrics_sum.items()}
+            # Run evaluation
+            results = evaluator(dataset)
             
-            weights = {"accuracy": 0.4, "relevance": 0.3, "coherence": 0.2, "diversity": 0.1}
-            metrics["primary_metric"] = sum(metrics.get(k, 0) * w for k, w in weights.items())
-            
-            return metrics
-            
-        except Exception as e:
             return {
-                None
+                "score": results.score,
+                "results": results
             }
+        except Exception as e:
+            raise EvaluationError(f"DSPy evaluation failed: {str(e)}")
