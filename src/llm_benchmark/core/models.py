@@ -30,7 +30,7 @@ class TraditionalMethodConfig(BaseModel):
     parameters: Dict[str, Any] = Field(default_factory=dict, 
                                       description="Method-specific parameters")
 
-class GapeMethodConfig(BaseModel):
+class GepaMethodConfig(BaseModel):
     
     
     population_size: int = Field(10, description="Number of prompt variants per generation")
@@ -45,7 +45,7 @@ class MethodsConfig(BaseModel):
     
     
     traditional: Optional[TraditionalMethodConfig] = None
-    gape: Optional[GapeMethodConfig] = None
+    gepa: Optional[GepaMethodConfig] = None
 
 class OutputConfig(BaseModel):
     

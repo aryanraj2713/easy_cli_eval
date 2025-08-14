@@ -35,7 +35,7 @@ methods:
     methods:
       - zero_shot
   
-  gape:
+  gepa:
     population_size: 10
     generations: 5
     mutation_rate: 0.3
@@ -62,10 +62,10 @@ output:
         assert config.tasks[0].dataset == "squad_v2"
         assert config.tasks[0].metrics == ["accuracy", "f1_score"]
         assert config.methods.traditional.methods == ["zero_shot"]
-        assert config.methods.gape.population_size == 10
-        assert config.methods.gape.generations == 5
-        assert config.methods.gape.mutation_rate == 0.3
-        assert config.methods.gape.fitness_function == "composite_score"
+        assert config.methods.gepa.population_size == 10
+        assert config.methods.gepa.generations == 5
+        assert config.methods.gepa.mutation_rate == 0.3
+        assert config.methods.gepa.fitness_function == "composite_score"
         assert config.output.format == ["json"]
         assert config.output.include_plots is False
         assert config.output.save_intermediate is False
@@ -99,7 +99,7 @@ methods:
         assert result["models"] == ["openai:gpt-4"]
         assert result["tasks"] == ["question_answering"]
         assert result["methods"]["traditional"] == ["zero_shot"]
-        assert result["methods"]["gape"] is False
+        assert result["methods"]["gepa"] is False
 
 
 def test_load_invalid_config():

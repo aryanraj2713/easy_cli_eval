@@ -129,12 +129,12 @@ def _create_evaluator(method: str, provider_instance):
     if method in ["zero_shot", "few_shot", "chain_of_thought"]:
         from ...evaluation.traditional import TraditionalEvaluator
         return TraditionalEvaluator(provider=provider_instance, method=method)
-    elif method == "gape":
+    elif method == "gepa":
         from ...evaluation.base import BaseEvaluator
         
-        class GAPEEvaluator(BaseEvaluator):
+        class GEPAEvaluator(BaseEvaluator):
             def evaluate(self, model, dataset, config):
-                result = model.gape(
+                result = model.gepa(
                     base_prompt=f"Task: {config['task']}\nDataset: {dataset}",
                     target_task=config['task'],
                 )
@@ -143,7 +143,7 @@ def _create_evaluator(method: str, provider_instance):
             def get_required_config(self):
                 return ["task"]
         
-        return GAPEEvaluator(provider=provider_instance)
+        return GEPAEvaluator(provider=provider_instance)
     else:
         raise ConfigurationError(f"Invalid method: {method}")
 

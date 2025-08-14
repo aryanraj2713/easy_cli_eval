@@ -53,7 +53,7 @@ def validate_config(config_path: Union[str, Path]) -> Dict[str, Any]:
                 "traditional": (
                     config.methods.traditional.methods if config.methods.traditional else []
                 ),
-                "gape": bool(config.methods.gape),
+                "gepa": bool(config.methods.gepa),
             },
         }
     except ValidationError as e:

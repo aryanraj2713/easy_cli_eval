@@ -48,7 +48,7 @@ def validate_command(config_path: Path) -> None:
                 for method in result["methods"]["traditional"]:
                     console.print(f"    • {method}")
             
-            if result["methods"]["gape"]:
+            if result["methods"]["gepa"]:
                 console.print("  [bold]GAPE:[/bold] Enabled")
             
             logger.info(

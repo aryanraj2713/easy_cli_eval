@@ -66,12 +66,12 @@ def experiment_command(
         for method in config.methods.traditional.methods:
             console.print(f"    • {method}")
     
-    if config.methods.gape:
+    if config.methods.gepa:
         console.print(
             "  [bold]GAPE:[/bold] "
-            f"pop={config.methods.gape.population_size}, "
-            f"gen={config.methods.gape.generations}, "
-            f"mut={config.methods.gape.mutation_rate}"
+            f"pop={config.methods.gepa.population_size}, "
+            f"gen={config.methods.gepa.generations}, "
+            f"mut={config.methods.gepa.mutation_rate}"
         )
     
     results = _run_experiment(config, output_dir)
@@ -94,7 +94,7 @@ def _run_experiment(config, output_dir: Path) -> Dict:
     total_runs = 0
     if config.methods.traditional:
         total_runs += len(config.methods.traditional.methods) * len(config.models) * len(config.tasks)
-    if config.methods.gape:
+    if config.methods.gepa:
         total_runs += len(config.models) * len(config.tasks)
     
     with Progress() as progress:
@@ -111,15 +111,15 @@ def _run_experiment(config, output_dir: Path) -> Dict:
                 )
                 results[method] = method_results
         
-        if config.methods.gape:
-            gape_results = _run_method(
+        if config.methods.gepa:
+            gepa_results = _run_method(
                 config=config,
-                method="gape",
+                method="gepa",
                 output_dir=output_dir,
                 progress=progress,
                 task_id=task,
             )
-            results["gape"] = gape_results
+            results["gepa"] = gepa_results
     
     return results
 
