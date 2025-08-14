@@ -122,7 +122,7 @@ class OpenAIProvider(BaseLLMProvider):
         except ImportError:
             raise ImportError("DSPy is required for this functionality.")
     
-    def gape(
+    def gepa(
         self,
         base_prompt: str,
         target_task: str,

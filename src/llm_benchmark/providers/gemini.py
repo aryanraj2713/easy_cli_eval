@@ -115,7 +115,7 @@ class GeminiProvider(BaseLLMProvider):
             max_tokens=self.max_output_tokens,
         )
     
-    def gape(
+    def gepa(
         self,
         base_prompt: str,
         target_task: str,

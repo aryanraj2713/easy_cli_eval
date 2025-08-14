@@ -34,7 +34,7 @@ class BaseLLMProvider(ABC):
         pass
     
     @abstractmethod
-    def gape(
+    def gepa(
         self,
         base_prompt: str,
         target_task: str,
